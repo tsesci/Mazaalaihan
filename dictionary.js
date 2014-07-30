@@ -67,8 +67,8 @@ dictionary.find = function(word) {
 
 	log('"' + word + '" is not found');
 
-	if (word.match(/(ed|s)$/) !== null) {
-		var preTransformWord = word.replace(/(ed|s)$/, '');
+	if (word.match(/(ed|s|ing)$/) !== null) {
+		var preTransformWord = word.replace(/(ed|s|ing)$/, '');
 		var nearestIndexOfPreTransformWord = dictionary.findNearestIndex(preTransformWord);
 
 		log('"' + word + '" seems a transformed word');
