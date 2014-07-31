@@ -117,7 +117,7 @@ function buildPopoverWindow(result) {
         resultHTML += '<div class="popover-content"><p class="small">' + result[i]['mon'] + '</p></div>';
     }
 
-    resultHTML += '<div class="popover-title" style="background-color: #f7f7f7;"><p class="small" align="right">&copy; 2014, Barbayar Dashzeveg</p></div>';
+    resultHTML += '<div class="popover-title" style="background-color: #f7f7f7;"><p class="small" style="text-align:right;">&copy; 2014, Barbayar Dashzeveg</p></div>';
 
     $popoverWindow.append(resultHTML);
 }
