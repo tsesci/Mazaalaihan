@@ -3,34 +3,13 @@
 // https://developer.chrome.com/extensions/content_scripts#execution-environment
 // http://stackoverflow.com/questions/10568065/limit-the-scope-of-bootstrap-styles/14145510#14145510
 
-var loadingWindow = ' \
-<div class="mazaalai"> \
-    <div class="modal fade" id="_mazaalaiLoadingWindow" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;"> \
-        <div class="modal-dialog"> \
-            <div class="modal-content"> \
-                <div class="modal-header"> \
-                    <h2 class="modal-title" align="left">Мазаалайхан</h2> \
-                </div> \
-                <div class="modal-body"> \
-                    <p>Ачааллаж байна. Түр хүлээнэ үү...</p> \
-                    <div class="progress progress-striped active"> \
-                        <div class="progress-bar progress-bar-info" role="progressbar" style="width: 100%"> \
-                        </div> \
-                    </div> \
-                </div> \
-            </div> \
-        </div> \
-    </div> \
-</div>';
 var popoverWindow = ' \
 <div class="mazaalai"> \
     <div class="popover" id="_mazaalaiPopoverWindow"> \
     </div> \
 </div>';
-$('body').prepend(loadingWindow);
 $('body').prepend(popoverWindow);
 $popoverWindow = $('#_mazaalaiPopoverWindow');
-$loadingWindow = $('#_mazaalaiLoadingWindow');
 
 var lastWord = null;
 
@@ -92,24 +71,14 @@ function cleanWord(word) {
     return matches[0];
 }
 
-function showLoadingWindow() {
-    $loadingWindow.modal({
-        backdrop: 'static',
-        keyboard: false
-    });
-}
-
-function hideLoadingWindow() {
-    $loadingWindow.modal('hide');
-}
-
-function buildPopoverWindow(result) {
+function buildPopoverWindow(word, result) {
     var titleClass = 'bg-success';
     var resultHTML = '';
 
     $popoverWindow.html('');
     if (result.length !== 1) {
         titleClass = 'bg-danger';
+        resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small"><b>&ldquo;' + word + '&rdquo;</b> гэсэн үг олдоогүй тул, ойролцоох үгнүүдийг харуулж байна.</p></div>';
     }
 
     for (var i = 0; i < result.length; i++) {
@@ -117,7 +86,7 @@ function buildPopoverWindow(result) {
         resultHTML += '<div class="popover-content"><p class="small">' + result[i]['mon'] + '</p></div>';
     }
 
-    resultHTML += '<div class="popover-title" style="background-color: #f7f7f7;"><p class="small" style="text-align:right;">&copy; 2014, Barbayar Dashzeveg</p></div>';
+    resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small" style="text-align:right;">&copy; 2014, Barbayar Dashzeveg</p></div>';
 
     $popoverWindow.append(resultHTML);
 }
@@ -155,6 +124,12 @@ function showPopoverWindow(x, y) {
 }
 
 function onMouseMove(event) {
+    if (!event.ctrlKey) {
+        $popoverWindow.hide();
+
+        return;
+    }
+
     var word = getWordAtPoint(event.target, event.x, event.y);
     word = cleanWord(word);
 
@@ -174,31 +149,9 @@ function onMouseMove(event) {
         command: 'find',
         parameter: word,
     }, function(result) {
-        buildPopoverWindow(result);
+        buildPopoverWindow(word, result);
         showPopoverWindow(event.pageX, event.pageY);
     });
 }
 
-function onRuntimeMessage(message) {
-    log('received [' + message.command + '] from background');
-
-    switch (message.command) {
-        case 'activate':
-            window.removeEventListener('mousemove', onMouseMove, false);
-            window.addEventListener('mousemove', onMouseMove, false);
-        break;
-        case 'deactivate':
-            window.removeEventListener('mousemove', onMouseMove, false);
-        break;
-        case 'loading':
-            if (message.parameter) {
-                showLoadingWindow();
-            } else {
-                hideLoadingWindow();
-            }
-        break;
-    }
-}
-
-chrome.runtime.onMessage.addListener(onRuntimeMessage);
-log('injected the injection');
+window.addEventListener('mousemove', onMouseMove, false);

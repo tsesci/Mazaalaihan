@@ -9,10 +9,6 @@
         "48": "icons/icon_48.png",
         "128": "icons/icon_128.png"
     },
-    "browser_action": {
-        "default_title": "Мазаалайхан",
-        "default_icon": "icons/disabled_icon_38.png"
-    },
     "background": {
         "scripts": ["libs/jquery-1.11.1.min.js", "libs/PorterStemmer.js", "background.js", "dictionary.js"],
         "persistent": false
