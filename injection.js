@@ -9,10 +9,10 @@ var loadingWindow = ' \
         <div class="modal-dialog"> \
             <div class="modal-content"> \
                 <div class="modal-header"> \
-                    <h4 class="modal-title" align="left">Мазаалайхан</h4> \
+                    <h2 class="modal-title" align="left">Мазаалайхан</h2> \
                 </div> \
                 <div class="modal-body"> \
-                    <p align="left">Ачааллаж байна. Түр хүлээнэ үү...</p> \
+                    <p>Ачааллаж байна. Түр хүлээнэ үү...</p> \
                     <div class="progress progress-striped active"> \
                         <div class="progress-bar progress-bar-info" role="progressbar" style="width: 100%"> \
                         </div> \
@@ -24,11 +24,13 @@ var loadingWindow = ' \
 </div>';
 var popoverWindow = ' \
 <div class="mazaalai"> \
-    <div class="popover right" id="_mazaalaiPopoverWindow"> \
+    <div class="popover" id="_mazaalaiPopoverWindow"> \
     </div> \
 </div>';
-$('body').append(loadingWindow);
-$('body').append(popoverWindow);
+$('body').prepend(loadingWindow);
+$('body').prepend(popoverWindow);
+$popoverWindow = $('#_mazaalaiPopoverWindow');
+$loadingWindow = $('#_mazaalaiLoadingWindow');
 
 var lastWord = null;
 
@@ -91,33 +93,65 @@ function cleanWord(word) {
 }
 
 function showLoadingWindow() {
-    $('#_mazaalaiLoadingWindow').modal({
+    $loadingWindow.modal({
         backdrop: 'static',
         keyboard: false
     });
 }
 
 function hideLoadingWindow() {
-    $('#_mazaalaiLoadingWindow').modal('hide');
+    $loadingWindow.modal('hide');
 }
 
 function buildPopoverWindow(result) {
-    var labelClass = 'label-success';
+    var titleClass = 'bg-success';
     var resultHTML = '';
 
-    $('#_mazaalaiPopoverWindow').html('<div class="arrow"></div>');
+    $popoverWindow.html('');
     if (result.length !== 1) {
-        labelClass = 'label-danger';
+        titleClass = 'bg-danger';
     }
 
     for (var i = 0; i < result.length; i++) {
-        resultHTML += '<div class="popover-title"><span class="label ' + labelClass + '">' + result[i]['eng'] + '</span></div>';
-        resultHTML += '<div class="popover-content"><small>' + result[i]['mon'] + '</small></div>';
+        resultHTML += '<div class="popover-title ' + titleClass + '"><p>' + result[i]['eng'] + '</p></div>';
+        resultHTML += '<div class="popover-content"><p class="small">' + result[i]['mon'] + '</p></div>';
     }
 
-    resultHTML += '<div class="popover-title" align="right"><small>&copy; 2014, Barbayar Dashzeveg</small></div>';
+    resultHTML += '<div class="popover-title" style="background-color: #f7f7f7;"><p class="small" align="right">&copy; 2014, Barbayar Dashzeveg</p></div>';
 
-    $('#_mazaalaiPopoverWindow').append(resultHTML);
+    $popoverWindow.append(resultHTML);
+}
+
+function showPopoverWindow(x, y) {
+    var popoverWindowWidth = $popoverWindow.width();
+    var popoverWindowHeight = $popoverWindow.height();
+    var popoverWindowX = x + 10;
+    var popoverWindowY = y - popoverWindowHeight / 2;
+
+    var popoverWindowTop = popoverWindowY;
+    var popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
+    var popoverWindowLeft = popoverWindowX;
+    var popoverWindowRight = popoverWindowLeft + popoverWindowWidth;
+    var windowTop = $(window).scrollTop();
+    var windowBottom = windowTop + $(window).height();
+    var windowLeft = $(window).scrollLeft();
+    var windowRight = windowLeft + $(window).width();
+
+    if (popoverWindowRight > windowRight) {
+        popoverWindowX = x - popoverWindowWidth - 10;
+    }
+
+    if (popoverWindowBottom > windowBottom) {
+        popoverWindowY = windowBottom - popoverWindowHeight;
+    }
+
+    if (popoverWindowTop < windowTop) {
+        popoverWindowY = windowTop;
+    }
+
+    $popoverWindow.css('left', popoverWindowX + 'px');
+    $popoverWindow.css('top', popoverWindowY + 'px');
+    $popoverWindow.show();
 }
 
 function onMouseMove(event) {
@@ -131,7 +165,7 @@ function onMouseMove(event) {
     lastWord = word;
 
     if (word === null) {
-        $('#_mazaalaiPopoverWindow').hide();
+        $popoverWindow.hide();
 
         return;
     }
@@ -141,9 +175,7 @@ function onMouseMove(event) {
         parameter: word,
     }, function(result) {
         buildPopoverWindow(result);
-        $('#_mazaalaiPopoverWindow').show();
-        $('#_mazaalaiPopoverWindow').css('left', (event.pageX + 10) + 'px');
-        $('#_mazaalaiPopoverWindow').css('top', (event.pageY - ($('#_mazaalaiPopoverWindow').height() / 2)-10) + 'px');
+        showPopoverWindow(event.pageX, event.pageY);
     });
 }
 

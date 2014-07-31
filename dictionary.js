@@ -67,20 +67,20 @@ dictionary.find = function(word) {
 
 	log('"' + word + '" is not found');
 
-	if (word.match(/(ed|s|ing)$/) !== null) {
-		var preTransformWord = word.replace(/(ed|s|ing)$/, '');
-		var nearestIndexOfPreTransformWord = dictionary.findNearestIndex(preTransformWord);
+	var stem = stemmer(word);
 
-		log('"' + word + '" seems a transformed word');
-		log('tries again with "' + preTransformWord + '"');
+	if (stem !== word) {
+		log('tries again with "' + stem + '"');
 
-		if (dictionary._data[nearestIndexOfPreTransformWord]['eng'] === preTransformWord) {
-			log('"' + preTransformWord + '" is found');
+		var nearestIndexOfStem = dictionary.findNearestIndex(stem);
 
-			return [dictionary._data[nearestIndexOfPreTransformWord]];
+		if (dictionary._data[nearestIndexOfStem]['eng'] === stem) {
+			log('"' + stem + '" is found');
+
+			return [dictionary._data[nearestIndexOfStem]];
 		}
 
-		log('"' + preTransformWord + '" is not found');
+		log('"' + stem + '" is not found');
 	}
 
 	var result = [];

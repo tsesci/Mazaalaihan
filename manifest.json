@@ -14,7 +14,7 @@
         "default_icon": "icons/disabled_icon_38.png"
     },
     "background": {
-        "scripts": ["libs/jquery-1.11.1.min.js", "background.js", "dictionary.js"],
+        "scripts": ["libs/jquery-1.11.1.min.js", "libs/PorterStemmer.js", "background.js", "dictionary.js"],
         "persistent": false
     },
     "content_scripts": [

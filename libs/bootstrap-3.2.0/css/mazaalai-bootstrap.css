@@ -980,7 +980,7 @@
 .mazaalai .h4,
 .mazaalai .h5,
 .mazaalai .h6 {
-  font-family: inherit;
+  font-family: times, Times New Roman, times-roman, georgia, serif;
   font-weight: 500;
   line-height: 1.1;
   color: inherit;
@@ -1084,7 +1084,13 @@
   font-size: 12px;
 }
 .mazaalai p {
-  margin: 0 0 10px;
+  margin: 0;
+  font-family: times, Times New Roman, times-roman, georgia, serif;
+  font-size: 14px;
+  line-height: 20px;
+  text-transform: uppercase;
+  color: #000;
+  text-align: left;
 }
 .mazaalai .lead {
   margin-bottom: 20px;
@@ -5584,16 +5590,15 @@ button.mazaalai .close {
 }
 .mazaalai .popover-title {
   margin: 0;
-  padding: 8px 14px;
+  padding: 4px 8px;
   font-size: 14px;
   font-weight: normal;
   line-height: 18px;
-  background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb;
   border-radius: 5px 5px 0 0;
 }
 .mazaalai .popover-content {
-  padding: 9px 14px;
+  padding: 4px 8px;
 }
 .mazaalai .popover > .arrow,
 .mazaalai .popover > .arrow:after {
