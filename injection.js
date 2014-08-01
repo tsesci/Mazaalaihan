@@ -62,7 +62,7 @@ function cleanWord(word) {
         return null;
     }
 
-    matches = word.toLowerCase().match(/[a-z]+/);
+    matches = word.toLocaleLowerCase().match(/[a-z,а-я,өүё]+/);
 
     if (matches === null) {
         return null;
@@ -82,8 +82,8 @@ function buildPopoverWindow(word, result) {
     }
 
     for (var i = 0; i < result.length; i++) {
-        resultHTML += '<div class="popover-title ' + titleClass + '"><p>' + result[i]['eng'] + '</p></div>';
-        resultHTML += '<div class="popover-content"><p class="small">' + result[i]['mon'] + '</p></div>';
+        resultHTML += '<div class="popover-title ' + titleClass + '"><p>' + result[i][0] + '</p></div>';
+        resultHTML += '<div class="popover-content"><p class="small">' + result[i][1] + '</p></div>';
     }
 
     resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small" style="text-align:right;">&copy; 2014, Barbayar Dashzeveg</p></div>';
@@ -92,33 +92,31 @@ function buildPopoverWindow(word, result) {
 }
 
 function showPopoverWindow(x, y) {
+    var spareSpace = 20;
     var popoverWindowWidth = $popoverWindow.width();
     var popoverWindowHeight = $popoverWindow.height();
 
     var popoverWindowTop = y - popoverWindowHeight / 2;
     var popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
-    var popoverWindowLeft = x + 10;
+    var popoverWindowLeft = x + spareSpace;
     var popoverWindowRight = popoverWindowLeft + popoverWindowWidth;
     var windowTop = $(window).scrollTop();
     var windowBottom = windowTop + $(window).height();
     var windowLeft = $(window).scrollLeft();
     var windowRight = windowLeft + $(window).width();
 
-    log(popoverWindowRight + ' > ' + windowRight);
-    if (popoverWindowRight > windowRight) {
-        popoverWindowLeft = x - popoverWindowWidth - 10;
+    if (popoverWindowRight + spareSpace > windowRight) {
+        popoverWindowLeft = x - popoverWindowWidth - spareSpace;
         popoverWindowRight = popoverWindowLeft + popoverWindowWidth;
     }
 
-    log(popoverWindowBottom + ' > ' + windowBottom);
-    if (popoverWindowBottom > windowBottom) {
-        popoverWindowTop = windowBottom - popoverWindowHeight;
+    if (popoverWindowBottom + spareSpace > windowBottom) {
+        popoverWindowTop = windowBottom - popoverWindowHeight - spareSpace;
         popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
     }
 
-    log(popoverWindowTop + ' < ' + windowTop);
-    if (popoverWindowTop < windowTop) {
-        popoverWindowTop = windowTop;
+    if (popoverWindowTop - spareSpace < windowTop) {
+        popoverWindowTop = windowTop + spareSpace;
         popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
     }
 
@@ -153,6 +151,10 @@ function onMouseMove(event) {
         command: 'find',
         parameter: word,
     }, function(result) {
+        if (result === null) {
+            return;
+        }
+
         buildPopoverWindow(word, result);
         showPopoverWindow(event.pageX, event.pageY);
     });

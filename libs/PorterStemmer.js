@@ -9,7 +9,7 @@
 // Release 1 be 'andargor', Jul 2004
 // Release 2 (substantially revised) by Christopher McKenzie, Aug 2009
 
-var stemmer = (function(){
+var englishStemmer = (function(){
     var step2list = {
             "ational" : "ate",
             "tional" : "tion",

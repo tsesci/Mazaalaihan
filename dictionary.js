@@ -1,11 +1,20 @@
-var dictionary = {};
-dictionary._data = null;
-dictionary._filename = 'data/engmon.json';
+function Dictionary(filename, stemmer) {
+	this._data = null;
+	this._stemmer = stemmer;
 
-dictionary._findNearestIndex = function(word, start, end) {
+	var currentObject = this;
+
+    $.getJSON(chrome.extension.getURL(filename), function(result) {
+        currentObject._data = result;
+
+        log('"' + filename + '" is loaded(' + result.length + ' words)');
+    });
+}
+
+Dictionary.prototype._findNearestIndex = function(word, start, end) {
 	if (typeof start === 'undefined') {
 		start = 0;
-		end = dictionary._data.length;
+		end = this._data.length;
 	}
 
 	if (start >= end) {
@@ -13,79 +22,68 @@ dictionary._findNearestIndex = function(word, start, end) {
 	}
 
 	var middle = Math.floor((start + end) / 2);
-	var compareResult = word.localeCompare(dictionary._data[middle]['eng']);
+	var compareResult = word.localeCompare(this._data[middle][0]);
 
 	if (compareResult === 0) {
 		return middle;
 	} else if (compareResult === -1) {
-		return dictionary._findNearestIndex(word, start, middle - 1);
+		return this._findNearestIndex(word, start, middle - 1);
 	} else if (compareResult === 1) {
-		return dictionary._findNearestIndex(word, middle + 1, end);
+		return this._findNearestIndex(word, middle + 1, end);
 	}
 }
 
-dictionary._load = function() {
-    if (dictionary._data !== null) {
-        log('dictionary is already loaded');
-
-        return;
-    }
-
-    $.getJSON(chrome.extension.getURL(dictionary._filename), function(result) {
-        dictionary._data = result;
-
-        log('dictionary is loaded(' + result.length + ' words)');
-    });
-}
-
-dictionary.find = function(word) {
+Dictionary.prototype.find = function(word) {
 	if (word === null) {
 		return null;
 	}
 
-	if (dictionary._data === null) {
-		log('dictionary is not yet loaded');
+	if (this._data === null) {
+		log('this is not yet loaded');
 
 		return null;
 	}
 
-	var nearestIndex = dictionary._findNearestIndex(word);
+	var nearestIndex = this._findNearestIndex(word);
 
-	if (dictionary._data[nearestIndex]['eng'] === word) {
+	if (this._data[nearestIndex][0] === word) {
 		log('"' + word + '" is found');
 
-		return [dictionary._data[nearestIndex]];
+		return [this._data[nearestIndex]];
 	}
 
 	log('"' + word + '" is not found');
 
-	var stem = stemmer(word);
+	if (typeof this._stemmer !== 'undefined') {
+		var stem = this._stemmer(word);
 
-	if (stem !== word) {
-		log('tries again with "' + stem + '"');
+		if (stem !== word) {
+			log('tries again with "' + stem + '"');
 
-		var nearestIndexOfStem = dictionary._findNearestIndex(stem);
+			var nearestIndexOfStem = this._findNearestIndex(stem);
 
-		if (dictionary._data[nearestIndexOfStem]['eng'] === stem) {
-			log('"' + stem + '" is found');
+			if (this._data[nearestIndexOfStem][0] === stem) {
+				log('"' + stem + '" is found');
 
-			return [dictionary._data[nearestIndexOfStem]];
+				return [this._data[nearestIndexOfStem]];
+			}
+
+			log('"' + stem + '" is not found');
 		}
-
-		log('"' + stem + '" is not found');
 	}
 
 	var result = [];
 	var start = nearestIndex - 3;
 	var end = nearestIndex + 3;
 	start = start < 0 ? 0 : start;
-	end = end < dictionary._data.length ? end : dictionary._data.length - 1;
+	end = end < this._data.length ? end : this._data.length - 1;
 
 	for (var i = start; i <= end; i++) {
-		result.push(dictionary._data[i]);
+		result.push(this._data[i]);
 	}
 
 	return result;
 }
 
-dictionary._load();
+engmon = new Dictionary('data/engmon.json', englishStemmer);
+moneng = new Dictionary('data/moneng.json');
