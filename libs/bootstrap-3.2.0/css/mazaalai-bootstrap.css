@@ -1084,7 +1084,10 @@
   font-size: 12px;
 }
 .mazaalai p {
-  margin: 0;
+  margin-left: 0;
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
   font-family: times, Times New Roman, times-roman, georgia, serif;
   font-size: 14px;
   line-height: 20px;
@@ -1105,6 +1108,10 @@
 }
 .mazaalai small,
 .mazaalai .small {
+  margin-left: 0;
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
   font-size: 85%;
 }
 .mazaalai cite {

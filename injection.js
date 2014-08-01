@@ -94,32 +94,36 @@ function buildPopoverWindow(word, result) {
 function showPopoverWindow(x, y) {
     var popoverWindowWidth = $popoverWindow.width();
     var popoverWindowHeight = $popoverWindow.height();
-    var popoverWindowX = x + 10;
-    var popoverWindowY = y - popoverWindowHeight / 2;
 
-    var popoverWindowTop = popoverWindowY;
+    var popoverWindowTop = y - popoverWindowHeight / 2;
     var popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
-    var popoverWindowLeft = popoverWindowX;
+    var popoverWindowLeft = x + 10;
     var popoverWindowRight = popoverWindowLeft + popoverWindowWidth;
     var windowTop = $(window).scrollTop();
     var windowBottom = windowTop + $(window).height();
     var windowLeft = $(window).scrollLeft();
     var windowRight = windowLeft + $(window).width();
 
+    log(popoverWindowRight + ' > ' + windowRight);
     if (popoverWindowRight > windowRight) {
-        popoverWindowX = x - popoverWindowWidth - 10;
+        popoverWindowLeft = x - popoverWindowWidth - 10;
+        popoverWindowRight = popoverWindowLeft + popoverWindowWidth;
     }
 
+    log(popoverWindowBottom + ' > ' + windowBottom);
     if (popoverWindowBottom > windowBottom) {
-        popoverWindowY = windowBottom - popoverWindowHeight;
+        popoverWindowTop = windowBottom - popoverWindowHeight;
+        popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
     }
 
+    log(popoverWindowTop + ' < ' + windowTop);
     if (popoverWindowTop < windowTop) {
-        popoverWindowY = windowTop;
+        popoverWindowTop = windowTop;
+        popoverWindowBottom = popoverWindowTop + popoverWindowHeight;
     }
 
-    $popoverWindow.css('left', popoverWindowX + 'px');
-    $popoverWindow.css('top', popoverWindowY + 'px');
+    $popoverWindow.css('left', popoverWindowLeft + 'px');
+    $popoverWindow.css('top', popoverWindowTop + 'px');
     $popoverWindow.show();
 }
 
