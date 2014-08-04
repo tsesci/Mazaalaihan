@@ -19,13 +19,13 @@ function onRuntimeMessage(message, sender, callback) {
         case 'log':
             log(message.parameter);
         break;
-        case 'find':
+        case 'search':
             var word = message.parameter;
 
             if (isEnglish(word)) {
-                callback(engmon.find(word));
+                callback(engmon.search(word));
             } else {
-                callback(moneng.find(word));
+                callback(moneng.search(word));
             }
         break;
     }

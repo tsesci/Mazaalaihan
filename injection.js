@@ -71,14 +71,20 @@ function cleanWord(word) {
     return matches[0];
 }
 
-function buildPopoverWindow(word, result) {
+function buildPopoverWindow(word, found, result) {
     var titleClass = 'bg-success';
     var resultHTML = '';
 
     $popoverWindow.html('');
-    if (result.length !== 1) {
+
+    if (!found) {
         titleClass = 'bg-danger';
-        resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small"><b>&ldquo;' + word + '&rdquo;</b> гэсэн үг олдоогүй тул, ойролцоох үгнүүдийг харуулж байна.</p></div>';
+
+        if (result.length > 0) {
+            resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small"><b>&ldquo;' + word + '&rdquo;</b> гэсэн үг олдоогүй тул, ойролцоох үгнүүдийг харуулж байна.</p></div>';
+        } else {
+            resultHTML += '<div class="popover-title" style="background-color:#f7f7f7;"><p class="small"><b>&ldquo;' + word + '&rdquo;</b> гэсэн үг олдсонгүй.</p></div>';
+        }
     }
 
     for (var i = 0; i < result.length; i++) {
@@ -148,14 +154,10 @@ function onMouseMove(event) {
     }
 
     chrome.runtime.sendMessage({
-        command: 'find',
+        command: 'search',
         parameter: word,
-    }, function(result) {
-        if (result === null) {
-            return;
-        }
-
-        buildPopoverWindow(word, result);
+    }, function(response) {
+        buildPopoverWindow(word, response.found, response.result);
         showPopoverWindow(event.pageX, event.pageY);
     });
 }

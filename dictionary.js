@@ -1,17 +1,49 @@
-function Dictionary(filename, stemmer) {
-    this._data = null;
-    this._stemmer = stemmer;
-
-    var currentObject = this;
-
-    $.getJSON(chrome.extension.getURL(filename), function(result) {
-        currentObject._data = result;
-
-        log('"' + filename + '" is loaded(' + result.length + ' words)');
+function Dictionary(filename) {
+    var request = $.ajax({
+        url: filename,
+        dataType: 'json',
+        async: false,
     });
+
+    this._data = request.responseJSON;
+    log('loaded "' + filename + '"');
 }
 
-Dictionary.prototype._findNearestIndex = function(word, start, end) {
+Dictionary.prototype.search = function(word) {
+    throw 'Implement this method!';
+}
+
+function StemDictionary(filename, stemmer) {
+    Dictionary.call(this, filename);
+    this._stemmer = stemmer;
+}
+
+StemDictionary.prototype.search = function(word) {
+    // adding '_' prefix to avoid conflicting with native methods of object type
+    var stem = '_' + this._stemmer(word);
+
+    if (typeof this._data[stem] === 'undefined') {
+        log('"' + stem + '" is not found');
+
+        return {
+            found: false,
+            result: [],
+        };
+    }
+
+    log('"' + stem + '" is found');
+
+    return {
+        found: true,
+        result: this._data[stem],
+    }
+}
+
+function BinaryDictionary(filename) {
+    Dictionary.call(this, filename);
+}
+
+BinaryDictionary.prototype._findNearestIndex = function(word, start, end) {
     if (typeof start === 'undefined') {
         start = 0;
         end = this._data.length;
@@ -33,44 +65,19 @@ Dictionary.prototype._findNearestIndex = function(word, start, end) {
     }
 }
 
-Dictionary.prototype.find = function(word) {
-    if (word === null) {
-        return null;
-    }
-
-    if (this._data === null) {
-        log('this is not yet loaded');
-
-        return null;
-    }
-
+BinaryDictionary.prototype.search = function(word) {
     var nearestIndex = this._findNearestIndex(word);
 
     if (this._data[nearestIndex][0] === word) {
         log('"' + word + '" is found');
 
-        return [this._data[nearestIndex]];
+        return {
+            found: true,
+            result: [this._data[nearestIndex]],
+        };
     }
 
     log('"' + word + '" is not found');
-
-    if (typeof this._stemmer !== 'undefined') {
-        var stem = this._stemmer(word);
-
-        if (stem !== word) {
-            log('tries again with "' + stem + '"');
-
-            var nearestIndexOfStem = this._findNearestIndex(stem);
-
-            if (this._data[nearestIndexOfStem][0] === stem) {
-                log('"' + stem + '" is found');
-
-                return [this._data[nearestIndexOfStem]];
-            }
-
-            log('"' + stem + '" is not found');
-        }
-    }
 
     var result = [];
     var start = nearestIndex - 3;
@@ -82,8 +89,11 @@ Dictionary.prototype.find = function(word) {
         result.push(this._data[i]);
     }
 
-    return result;
+    return {
+        found: false,
+        result: result,
+    };
 }
 
-engmon = new Dictionary('data/engmon.json', englishStemmer);
-moneng = new Dictionary('data/moneng.json');
+engmon = new StemDictionary('data/engmon.json', snowballStemmer);
+moneng = new BinaryDictionary('data/moneng.json');
