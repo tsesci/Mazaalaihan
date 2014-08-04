@@ -1090,7 +1090,7 @@
   margin-bottom: 0;
   font-family: times, Times New Roman, times-roman, georgia, serif;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 16px;
   text-transform: uppercase;
   color: #000;
   text-align: left;
@@ -1112,7 +1112,8 @@
   margin-top: 0;
   margin-right: 0;
   margin-bottom: 0;
-  font-size: 85%;
+  font-size: 12px;
+  line-height: 14px;
 }
 .mazaalai cite {
   font-style: normal;
@@ -5571,7 +5572,7 @@ button.mazaalai .close {
   left: 0;
   z-index: 2147483647;
   display: none;
-  max-width: 276px;
+  max-width: 500px;
   padding: 1px;
   text-align: left;
   background-color: #ffffff;
