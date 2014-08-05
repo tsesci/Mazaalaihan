@@ -17,7 +17,8 @@
         {
             "matches": ["http://*/*", "https://*/*"],
             "css": ["libs/bootstrap-3.2.0/css/mazaalai-bootstrap.css"],
-            "js": ["libs/jquery-1.11.1.min.js", "libs/bootstrap-3.2.0/js/bootstrap.min.js", "injection.js"]
+            "js": ["libs/jquery-1.11.1.min.js", "libs/bootstrap-3.2.0/js/bootstrap.min.js", "injection.js"],
+            "all_frames": true
         }
     ]
 }
