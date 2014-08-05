@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "version": "0.4",
+    "version": "0.5",
     "author": "Дашзэвэгийн Барбаяр / Barbayar Dashzeveg",
     "name": "Мазаалайхан",
     "description": "Монгол-Англи-Монгол Толь Бичиг / Mongolia-English-Mongolia Dictionary",
@@ -16,8 +16,8 @@
     "content_scripts": [
         {
             "matches": ["http://*/*", "https://*/*"],
-            "css": ["libs/bootstrap-3.2.0/css/mazaalai-bootstrap.css"],
-            "js": ["libs/jquery-1.11.1.min.js", "libs/bootstrap-3.2.0/js/bootstrap.min.js", "injection.js"],
+            "css": ["libs/mazaalai-bootstrap.css"],
+            "js": ["libs/jquery-1.11.1.min.js", "injection.js"],
             "all_frames": true
         }
     ]
